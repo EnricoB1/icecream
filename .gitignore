@@ -50,3 +50,4 @@ tests/testargs.log
 tests/testargs.trs
 tests/test-setup.sh
 tests/listing.txt
+/*.user
