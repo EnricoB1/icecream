@@ -2,7 +2,12 @@ language: cpp
 
 script:
   - ./autogen.sh
-  - ./configure --prefix=$PWD/_inst
+  - |
+        ./configure --prefix=$PWD/_inst
+        if test $? -ne 0; then
+           echo config failed. config.log:
+           cat config.log
+        fi
   - make
   - |
         if test "$TRAVIS_OS_NAME" = "linux"; then
