@@ -1185,7 +1185,8 @@ debug_test()
     fi
     gdb -nx -batch -x debug-gdb.txt "$testdir"/debug-remote >"$testdir"/debug-stdout-remote.txt  2>/dev/null
     if ! grep -A 1000 "$debugstart" "$testdir"/debug-stdout-remote.txt >"$testdir"/debug-output-remote.txt ; then
-        echo "Debug check failed (remote)."
+        echo "Debug check failed (remote). '$debugstart' not found in:"
+        cat "$testdir"/debug-stdout-remote.txt
         stop_ice 0
         abort_tests
     fi
@@ -1204,7 +1205,8 @@ debug_test()
     fi
     gdb -nx -batch -x debug-gdb.txt "$testdir"/debug-local >"$testdir"/debug-stdout-local.txt 2>/dev/null
     if ! grep -A 1000 "$debugstart" "$testdir"/debug-stdout-local.txt >"$testdir"/debug-output-local.txt ; then
-        echo "Debug check failed (local)."
+        echo "Debug check failed (local). '$debugstart' not found in:"
+        cat "$testdir"/debug-stdout-local.txt
         stop_ice 0
         abort_tests
     fi
@@ -1776,12 +1778,18 @@ fi
 if command -v gdb >/dev/null; then
     if command -v readelf >/dev/null; then
         debug_test "$TESTCXX" "-c -g0 debug.cpp" "Temporary breakpoint 1, 0x"
+        debug_test "$TESTCXX" "-c -g0 -g1 debug.cpp" "Temporary breakpoint 1,"
+        debug_test "$TESTCXX" "-c -g1 -g0 debug.cpp" "Temporary breakpoint 1, 0x"
+        debug_test "$TESTCXX" "-c -g0 -g debug.cpp" "Temporary breakpoint 1, main () at debug.cpp:8"
         debug_test "$TESTCXX" "-c -g debug.cpp" "Temporary breakpoint 1, main () at debug.cpp:8"
         debug_test "$TESTCXX" "-c -g $(pwd)/debug/debug2.cpp" "Temporary breakpoint 1, main () at $(pwd)/debug/debug2.cpp:8"
         if test -z "$debug_fission_disabled"; then
             debug_test "$TESTCXX" "-c -g debug.cpp -gsplit-dwarf" "Temporary breakpoint 1, main () at debug.cpp:8"
+            debug_test "$TESTCXX" "-c debug.cpp -gsplit-dwarf -g0 -g1" "Temporary breakpoint 1,"
+            debug_test "$TESTCXX" "-c debug.cpp -gsplit-dwarf -g1 -g0" "Temporary breakpoint 1, 0x"
             debug_test "$TESTCXX" "-c debug.cpp -gsplit-dwarf -g0" "Temporary breakpoint 1, 0x"
             debug_test "$TESTCXX" "-c -g $(pwd)/debug/debug2.cpp -gsplit-dwarf" "Temporary breakpoint 1, main () at $(pwd)/debug/debug2.cpp:8"
+            debug_test "$TESTCXX" "-c -g0 $(pwd)/debug/debug2.cpp -gsplit-dwarf" "Temporary breakpoint 1, main () at $(pwd)/debug/debug2.cpp:8"
         fi
     fi
 else
