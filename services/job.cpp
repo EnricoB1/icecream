@@ -33,8 +33,7 @@ list<string> CompileJob::flags(Argument_Type argumentType) const
     list<string> args;
 
     for (ArgumentsList::const_iterator it = m_flags.begin(); it != m_flags.end(); ++it) {
-        if (it->second == argumentType
-            || (m_dwarf_fission && (argumentType == Arg_Rest) && (it->second == Arg_RestAndDwarfFission))) {
+        if (it->second == argumentType) {
                 args.push_back(it->first);
         }
     }
@@ -57,10 +56,8 @@ std::list<std::string> CompileJob::remoteAndRestFlags() const
     list<string> args;
 
     for (ArgumentsList::const_iterator it = m_flags.begin(); it != m_flags.end(); ++it) {
-        if (it->second == Arg_Rest
-            || it->second == Arg_Remote
-            || (m_dwarf_fission && (it->second == Arg_RestAndDwarfFission))) {
-                args.push_back(it->first);
+        if (it->second == Arg_Rest || it->second == Arg_Remote) {
+            args.push_back(it->first);
         }
     }
 
@@ -77,9 +74,7 @@ list<string> CompileJob::allFlags() const
     list<string> args;
 
     for (ArgumentsList::const_iterator it = m_flags.begin(); it != m_flags.end(); ++it) {
-        if (m_dwarf_fission || it->second != Arg_RestAndDwarfFission) {
-            args.push_back(it->first);
-        }
+        args.push_back(it->first);
     }
 
     return args;

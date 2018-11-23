@@ -2011,19 +2011,19 @@ void CompileFileMsg::send_to_channel(MsgChannel *c) const
     *c << job->jobID();
 
     if (IS_PROTOCOL_30(c)) {
-        *c << job->remoteFlags();
+        *c << job->remoteAndRestFlags();
     } else {
         if (job->compilerName().find("clang") != string::npos) {
             // Hack for compilerwrapper.
-            std::list<std::string> flags = job->remoteFlags();
+            std::list<std::string> flags = job->remoteAndRestFlags();
             flags.push_front("clang");
             *c << flags;
         } else {
-            *c << job->remoteFlags();
+            *c << job->remoteAndRestFlags();
         }
     }
 
-    *c << job->restFlags();
+    *c << list<string>();
     *c << job->environmentVersion();
     *c << job->targetPlatform();
 

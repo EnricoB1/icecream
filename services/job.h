@@ -31,7 +31,6 @@
 typedef enum {
     Arg_Local,               // Local-only args.
     Arg_Remote,              // Remote-only args.
-    Arg_RestAndDwarfFission, // like Arg_Rest, but only if DwarfFission is enabled.
     Arg_Rest                 // Args to use both locally and remotely.
 } Argument_Type;
 
